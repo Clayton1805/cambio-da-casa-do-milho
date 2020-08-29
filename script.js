@@ -7,6 +7,7 @@ const url = `${apiInfo.api}${apiInfo.endpoint}`
 
 
 window.onload = () => {
+  fetchCurrency('USD', true);
   setupEventHandlers();  
 }
 
@@ -15,10 +16,8 @@ const setupEventHandlers = () => {
   searchButton.addEventListener('click', handleSearchEvent);
 
   const inputText = document.querySelector('#currency-input');
-  inputText.addEventListener('keyup', (event) => {
-    if (event.keyCode === 13) {
-      handleSearchEvent();
-    }
+  inputText.addEventListener('change', () => {
+    handleSearchEvent();
   });
 }
 
@@ -42,22 +41,30 @@ const clearList = () => {
   currencyList.innerHTML = '';
 }
 
-const fetchCurrency = (currency) => {
+const fetchCurrency = (currency, first) => {
+  // const upperCaseCurrency = currency.toUpperCase();
   const endpoint = `${url}?base=${currency}`;
-
   fetch(endpoint)
     .then((response) => response.json())
     .then((object) => {
-      console.log(object);
-      if (object.error) {
-        throw new Error(object.error);
+      // console.log(object);
+      if (first) {
+        if (object.error) {
+          throw new Error(object.error);
+        } else {
+          createOption(object.rates)
+        }
       } else {
-        handleRates(object.rates);
-      }
+        if (object.error) {
+          throw new Error(object.error);
+        } else {
+          handleRates(object.rates);
+        }
+      } 
     })
     .catch((error) => handleError(error))
 }
-
+// se ele pegar um erro executando o first ele tem que buscar a requisição de novo ate receber a resposta.
 const handleError = (errorMessage) => {
   window.alert(errorMessage);
 }
@@ -80,3 +87,15 @@ const renderRate = (key, value) => {
 
   currencyList.appendChild(li);
 }
+
+const createOption = (rates) => {  
+  const ratesKeys = Object.keys(rates);
+  const optionInput = document.querySelector('#currency-input');
+
+  ratesKeys.forEach((key) => {
+    const tagOption = document.createElement("option");
+    tagOption.innerText = key;
+    optionInput.appendChild(tagOption);
+  })
+}
+

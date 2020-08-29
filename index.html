@@ -13,7 +13,13 @@
 
   <section class="main-section">
     <label for="currency-input">Digite a moeda:</label>
-    <input type="text" placeholder="USD" id="currency-input">
+    <select id="currency-input">
+      <option value="Escolha a moeda" selected 	disabled>Escolha a moeda</option>
+      <option>BRL</option>
+      <option>USD</option>
+    </select>
+    <label for="currency-input-filter">Filtrar moeda:</label>
+    <select placeholder="USD" id="currency-input-filter"></select>
     <button id="search-button">Pesquisar</button>
     <ul id="currency-list"></ul>
   </section>
